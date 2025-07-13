@@ -3,6 +3,8 @@
 #include <string.h>
 #include <stdio.h>
 
+void test_lottery_performance(void);
+
 struct test 
   {
     const char *name;
@@ -38,9 +40,13 @@ static const struct test tests[] =
     {"mlfqs-nice-2", test_mlfqs_nice_2},
     {"mlfqs-nice-10", test_mlfqs_nice_10},
     {"mlfqs-block", test_mlfqs_block},
+    { "lottery-performance", test_lottery_performance },
+    
+
   };
 
 static const char *test_name;
+
 
 /* Runs the test named NAME. */
 void

@@ -160,12 +160,12 @@ next_sector:
 #### bytes in the loader, we reuse 4 bytes of the loader's code for
 #### this temporary pointer.
 
-	mov $0x2000, %ax
+	mov $0x2000, %ax	####커널이 로드된 메모리의 주소의 segment
 	mov %ax, %es
-	mov %es:0x18, %dx
-	mov %dx, start
-	movw $0x2000, start + 2
-	ljmp *start
+	mov %es:0x18, %dx	####ELF 헤더의 offset 0x18에 있는 e_entry 값 (entry point)을 읽음
+	mov %dx, start	####offset 저장
+	movw $0x2000, start + 2	####segment 저장
+	ljmp *start	####실제로 entry point로 점프 (실행 시작!)
 
 read_failed:
 start:

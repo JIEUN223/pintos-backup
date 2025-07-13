@@ -72,6 +72,12 @@ static void locate_block_device (enum block_type, const char *name);
 
 int main (void) NO_RETURN;
 
+int jhtest(int a)
+{
+int b=10;
+return a*b;
+}
+
 /* Pintos main program. */
 int
 main (void)
@@ -128,7 +134,8 @@ main (void)
 #endif
 
   printf ("Boot complete.\n");
-  
+  printf("jhtest result = %d\n",jhtest(155));
+
   /* Run actions specified on kernel command line. */
   run_actions (argv);
 

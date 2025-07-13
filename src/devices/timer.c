@@ -84,16 +84,15 @@ timer_elapsed (int64_t then)
   return timer_ticks () - then;
 }
 
-/* Sleeps for approximately TICKS timer ticks.  Interrupts must
-   be turned on. */
+/* 현재시간(timer_ticks())를 기준으로 thread를 주어진 tick수 만큼 block상태로 재우는 함수 */
 void
 timer_sleep (int64_t ticks) 
 {
   int64_t start = timer_ticks ();
 
   ASSERT (intr_get_level () == INTR_ON);
-  while (timer_elapsed (start) < ticks) 
-    thread_yield ();
+  thread_sleep(start+ticks); //현재 시점 + sleep하고 싶은 tick 수"를 더해, wake_up_tick을 계산해 넘김
+
 }
 
 /* Sleeps for approximately MS milliseconds.  Interrupts must be
@@ -172,6 +171,10 @@ timer_interrupt (struct intr_frame *args UNUSED)
 {
   ticks++;
   thread_tick ();
+  //깨울 thread가 있는지 체크해서 thread_awake()호출
+  if(ticks>=get_next_tick_to_awake()){
+    thread_awake(timer_ticks());
+  }
 }
 
 /* Returns true if LOOPS iterations waits for more than one timer

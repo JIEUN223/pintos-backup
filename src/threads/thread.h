@@ -1,6 +1,7 @@
 #ifndef THREADS_THREAD_H
 #define THREADS_THREAD_H
 
+
 #include <debug.h>
 #include <list.h>
 #include <stdint.h>
@@ -89,9 +90,14 @@ struct thread
     uint8_t *stack;                     /* Saved stack pointer. */
     int priority;                       /* Priority. */
     struct list_elem allelem;           /* List element for all threads list. */
+    
+    int64_t tick_to_awake; //각 thread가 언제 께어나야하는지 저장
+
 
     /* Shared between thread.c and synch.c. */
-    struct list_elem elem;              /* List element. */
+    struct list_elem elem;             //elem은 thread가 ready_list나 blocked_list에 들어갔을 때, 그 리스트에서의 자기 위치(노드) 역할을 해주는 필드
+
+    int tickets;   // 기본 값 1, 추후 값 바꾸는 것  가능
 
 #ifdef USERPROG
     /* Owned by userprog/process.c. */
@@ -137,5 +143,21 @@ int thread_get_nice (void);
 void thread_set_nice (int);
 int thread_get_recent_cpu (void);
 int thread_get_load_avg (void);
+
+void thread_sleep(int64_t ticks);
+void thread_awake(int64_t ticks);
+void update_next_tick_to_awake(void);
+int64_t get_next_tick_to_awake(void);
+
+
+
+enum scheduler_type {
+  SCHED_ROUND_ROBIN, //0
+  SCHED_LOTTERY//1
+};
+void set_scheduler(enum scheduler_type type);
+extern enum scheduler_type current_scheduler; //현재 스케쥴링 방식
+
+
 
 #endif /* threads/thread.h */

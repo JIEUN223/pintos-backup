@@ -15,6 +15,7 @@
 #include "userprog/process.h"
 #endif
 
+
 /* Random value for struct thread's `magic' member.
    Used to detect stack overflow.  See the big comment at the top
    of thread.h for details. */
@@ -36,6 +37,9 @@ static struct thread *initial_thread;
 
 /* Lock used by allocate_tid(). */
 static struct lock tid_lock;
+
+static int64_t next_tick_to_awake=INT64_MAX;
+static struct list blocked_list;
 
 /* Stack frame for kernel_thread(). */
 struct kernel_thread_frame 
@@ -71,6 +75,21 @@ static void schedule (void);
 void thread_schedule_tail (struct thread *prev);
 static tid_t allocate_tid (void);
 
+/******고친 부분 */
+// thread.c 맨 위쪽에 추가 (next_thread_to_run보다 위!)
+static struct thread *pick_lottery_thread(void);
+struct thread *get_thread_by_tid(tid_t tid);
+static int next_thread_tickets = 1;
+//스케쥴링 방식 
+enum scheduler_type current_scheduler = SCHED_ROUND_ROBIN;
+
+void
+set_scheduler(enum scheduler_type type) {
+  current_scheduler = type;
+}
+
+
+
 /* Initializes the threading system by transforming the code
    that's currently running into a thread.  This can't work in
    general and it is possible in this case only because loader.S
@@ -91,6 +110,7 @@ thread_init (void)
 
   lock_init (&tid_lock);
   list_init (&ready_list);
+  list_init(&blocked_list);
   list_init (&all_list);
 
   /* Set up a thread structure for the running thread. */
@@ -98,6 +118,8 @@ thread_init (void)
   init_thread (initial_thread, "main", PRI_DEFAULT);
   initial_thread->status = THREAD_RUNNING;
   initial_thread->tid = allocate_tid ();
+  initial_thread->tickets = 1;
+  random_init(timer_ticks());  // 시드 초기화
 }
 
 /* Starts preemptive thread scheduling by enabling interrupts.
@@ -136,7 +158,8 @@ thread_tick (void)
 
   /* Enforce preemption. */
   if (++thread_ticks >= TIME_SLICE)
-    intr_yield_on_return ();
+    intr_yield_on_return (); //현재 interrupt handler 종료 후 cpu를 양보하도록 설정
+  //실제 스위칭은 이후 schedule()에서 발생
 }
 
 /* Prints thread statistics. */
@@ -203,6 +226,17 @@ thread_create (const char *name, int priority,
 
   return tid;
 }
+
+
+//기본 생성 함수는 1장짜리 티켓을 주고, 특정 테스트에서는 더 많이 줄 수 있게함
+tid_t thread_create_lottery(const char *name, int priority, int tickets,
+                            thread_func *function, void *aux) {
+  next_thread_tickets = tickets;  // 다음 스레드가 생성될 때 사용할 티켓 수 설정
+  tid_t tid = thread_create(name, priority, function, aux);
+  next_thread_tickets = 1;        // 다음 thread는 기본값 (1장)으로 초기화
+  return tid;
+}
+
 
 /* Puts the current thread to sleep.  It will not be scheduled
    again until awoken by thread_unblock().
@@ -451,8 +485,6 @@ is_thread (struct thread *t)
 static void
 init_thread (struct thread *t, const char *name, int priority)
 {
-  enum intr_level old_level;
-
   ASSERT (t != NULL);
   ASSERT (PRI_MIN <= priority && priority <= PRI_MAX);
   ASSERT (name != NULL);
@@ -462,11 +494,12 @@ init_thread (struct thread *t, const char *name, int priority)
   strlcpy (t->name, name, sizeof t->name);
   t->stack = (uint8_t *) t + PGSIZE;
   t->priority = priority;
+  t->tick_to_awake = INT64_MAX;//새 스레드가 생성될 때, tick_to_awake 값을 미리최대값으로 초기화
+ //tick_to_awake값은 thread_sleep()에서 바뀜
   t->magic = THREAD_MAGIC;
-
-  old_level = intr_disable ();
+  t->tickets = next_thread_tickets;
   list_push_back (&all_list, &t->allelem);
-  intr_set_level (old_level);
+
 }
 
 /* Allocates a SIZE-byte frame at the top of thread T's stack and
@@ -487,14 +520,65 @@ alloc_frame (struct thread *t, size_t size)
    empty.  (If the running thread can continue running, then it
    will be in the run queue.)  If the run queue is empty, return
    idle_thread. */
+// threads/scheduler.c
 static struct thread *
-next_thread_to_run (void) 
-{
-  if (list_empty (&ready_list))
+next_thread_to_run(void) {
+  if (list_empty(&ready_list))
     return idle_thread;
-  else
-    return list_entry (list_pop_front (&ready_list), struct thread, elem);
+
+  if (current_scheduler == SCHED_ROUND_ROBIN)
+    return list_entry(list_pop_front(&ready_list), struct thread, elem);
+  else if (current_scheduler == SCHED_LOTTERY)
+    return pick_lottery_thread();  // 추가함수->lottery 스케쥴링
 }
+
+
+//로터리 스케쥴링 함수
+static struct thread *pick_lottery_thread(void) {
+  if (list_empty(&ready_list))
+    return idle_thread;
+
+  int total_tickets = 0;
+  struct list_elem *e;
+
+  // 1. 전체 티켓 수 계산
+  for (e = list_begin(&ready_list); e != list_end(&ready_list); e = list_next(e)) {
+    struct thread *t = list_entry(e, struct thread, elem);
+    total_tickets += t->tickets;  // 기본 값은 1
+  }
+
+  if (total_tickets == 0)
+    return list_entry(list_pop_front(&ready_list), struct thread, elem);
+
+  // 2. 난수 추첨 (1~total_tickets)
+  int winner = random_ulong() % total_tickets + 1;
+
+  // 3. 추첨된 티켓을 가진 thread 선택
+  for (e = list_begin(&ready_list); e != list_end(&ready_list); e = list_next(e)) {
+    struct thread *t = list_entry(e, struct thread, elem);
+    if (winner <= t->tickets) {
+      list_remove(e);  // ready_list에서 꼭 제거해야 함!
+      return t;
+    }
+    winner -= t->tickets;
+  }
+
+  // fallback
+  return list_entry(list_pop_front(&ready_list), struct thread, elem);
+}
+
+//또 추가
+/* Find thread by tid from all_list. */
+struct thread *get_thread_by_tid(tid_t tid) {
+  struct list_elem *e;
+  for (e = list_begin(&all_list); e != list_end(&all_list); e = list_next(e)) {
+    struct thread *t = list_entry(e, struct thread, allelem);
+    if (t->tid == tid)
+      return t;
+  }
+  return NULL;  // 못 찾은 경우
+}
+
 
 /* Completes a thread switch by activating the new thread's page
    tables, and, if the previous thread is dying, destroying it.
@@ -542,13 +626,6 @@ thread_schedule_tail (struct thread *prev)
     }
 }
 
-/* Schedules a new process.  At entry, interrupts must be off and
-   the running process's state must have been changed from
-   running to some other state.  This function finds another
-   thread to run and switches to it.
-
-   It's not safe to call printf() until thread_schedule_tail()
-   has completed. */
 static void
 schedule (void) 
 {
@@ -562,6 +639,7 @@ schedule (void)
 
   if (cur != next)
     prev = switch_threads (cur, next);
+
   thread_schedule_tail (prev);
 }
 
@@ -582,3 +660,92 @@ allocate_tid (void)
 /* Offset of `stack' member within `struct thread'.
    Used by switch.S, which can't figure it out on its own. */
 uint32_t thread_stack_ofs = offsetof (struct thread, stack);
+
+void thread_sleep(int64_t ticks)
+{
+  struct thread *cur=thread_current(); //현재 실행 중인 스레드의 struct thread*을 받아온다
+  //인터럽트 상태 저장용 변수
+ enum intr_level old_level;
+
+  ASSERT(!intr_context ()); 
+  /*
+  이 함수는 interrupt handler안에서 호출되면 안 됨
+  일반적인 thread실행 흐름 안 에서만 thread_sleep() 부를 수 있게 보장
+  */
+  
+  old_level = intr_disable();
+
+  if (cur!=idle_thread){ //idle_thread는 sleep대상이 될 수 없음
+    cur->tick_to_awake = ticks; // ✅ 현재 시간 + sleep 시간
+//현재 thread가 언제 깨어나야 하는지 저장
+    //ticks=timer_ticks()+sleep_time 
+    list_push_back(&blocked_list,&cur->elem);
+  }
+
+
+  update_next_tick_to_awake();
+  /*이 함수는 blocked_list 안에 있는 모든 스레드의 tick_to_awake 중에서
+가장 작은 값을 찾아 전역 변수 next_tick_to_awake에 저장함*/
+
+  cur->status=THREAD_BLOCKED;
+  schedule(); //->cpu를 다른 ready thread에 넘김-이 시점부터는 현제 thread는 잠들어 있는 상태
+  intr_set_level(old_level);
+
+}
+
+  /*목표: blocked_list에 있는 모든 스레드 중에서
+tick_to_awake <= ticks 인 애들을 깨워서 ready_list로 옮김
+
+*/
+void thread_awake(int64_t ticks) {
+  struct list_elem *e = list_begin(&blocked_list);
+
+  while (e != list_end(&blocked_list)) {
+    struct thread *t = list_entry(e, struct thread, elem);
+
+    if (t->tick_to_awake <= ticks) {
+      e=list_remove(e);
+      t->tick_to_awake=0;
+
+      enum intr_level old_level;
+      ASSERT(is_thread(t));
+      old_level=intr_disable();
+      
+      ASSERT(t->status == THREAD_BLOCKED);
+      list_push_back(&ready_list, &t->elem);
+      t->status = THREAD_READY;
+      intr_set_level(old_level);
+    }
+    else{
+      e=list_next(e);
+    }
+
+  }
+
+  update_next_tick_to_awake();
+}
+
+
+
+void update_next_tick_to_awake(void) {
+  struct list_elem *e;
+
+  if(list_empty(&blocked_list)){
+  next_tick_to_awake = INT64_MAX; // ✅ 항상 초기화해줘야 함!!
+  }
+
+  for (e = list_begin(&blocked_list); e != list_end(&blocked_list); e = list_next(e)) {
+    struct thread *t = list_entry(e, struct thread, elem);
+
+    if (t->tick_to_awake < next_tick_to_awake) {
+      next_tick_to_awake = t->tick_to_awake;
+    }
+  }
+}
+
+int64_t get_next_tick_to_awake(void){ // 다음으로 깨어나야 할 tick 값을 반환
+  if(list_empty(&blocked_list)){
+    next_tick_to_awake=INT64_MAX;
+  }
+  return next_tick_to_awake;
+}

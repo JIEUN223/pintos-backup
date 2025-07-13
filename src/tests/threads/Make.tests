@@ -9,7 +9,8 @@ priority-donate-nest priority-donate-sema priority-donate-lower		\
 priority-fifo priority-preempt priority-sema priority-condvar		\
 priority-donate-chain                                                   \
 mlfqs-load-1 mlfqs-load-60 mlfqs-load-avg mlfqs-recent-1 mlfqs-fair-2	\
-mlfqs-fair-20 mlfqs-nice-2 mlfqs-nice-10 mlfqs-block)
+mlfqs-fair-20 mlfqs-nice-2 mlfqs-nice-10 mlfqs-block    \
+lottery-performance)  
 
 # Sources for tests.
 tests/threads_SRC  = tests/threads/tests.c
@@ -36,6 +37,10 @@ tests/threads_SRC += tests/threads/mlfqs-load-avg.c
 tests/threads_SRC += tests/threads/mlfqs-recent-1.c
 tests/threads_SRC += tests/threads/mlfqs-fair.c
 tests/threads_SRC += tests/threads/mlfqs-block.c
+tests/threads_SRC += tests/threads/lottery-performance.c
+
+
+
 
 MLFQS_OUTPUTS = 				\
 tests/threads/mlfqs-load-1.output		\
