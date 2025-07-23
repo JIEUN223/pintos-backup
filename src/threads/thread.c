@@ -92,6 +92,7 @@ bool ticket_desc(const struct list_elem *a, const struct list_elem *b, void *aux
 
 
 
+
 /* Initializes the threading system by transforming the code
    that's currently running into a thread.  This can't work in
    general and it is possible in this case only because loader.S
@@ -536,7 +537,7 @@ next_thread_to_run(void) {
      struct thread *next = pick_lottery_thread();
 
     // 스레드가 성능 측정 대상이면 count 증가
-      count[next->perf_id]++;
+    //count[next->perf_id]++;
 
     return next;
   }
@@ -546,35 +547,50 @@ struct thread *pick_lottery_thread(void) {
   if (list_empty(&ready_list))
     return idle_thread;
 
-  int total_tickets = 0;
   struct list_elem *e;
+  int max_priority = PRI_MIN;
 
-  // 총 티켓 수 계산
+  // [1] Find max priority
   for (e = list_begin(&ready_list); e != list_end(&ready_list); e = list_next(e)) {
     struct thread *t = list_entry(e, struct thread, elem);
-    total_tickets += t->tickets;
+    if (t->priority > max_priority)
+      max_priority = t->priority;
   }
 
-  if (total_tickets == 0)
-    return list_entry(list_pop_front(&ready_list), struct thread, elem);
+  // [2] Collect candidates with max priority
+  struct thread *candidates[64];   // assuming max 64 threads
+  int tickets[64];
+  int countt = 0;
+  int total_tickets = 0;
 
-  int winner = random_ulong() % total_tickets + 1;
-
-  // 내림차순이므로 앞에서부터 빠르게 당첨자 탐색
   for (e = list_begin(&ready_list); e != list_end(&ready_list); e = list_next(e)) {
     struct thread *t = list_entry(e, struct thread, elem);
-    if (winner <= t->tickets) {
-      list_remove(&t->elem);
-      return t;
+    if (t->priority == max_priority && countt < 64) {
+      candidates[countt] = t;
+      tickets[countt] = t->tickets;
+      total_tickets += t->tickets;
+      countt++;
     }
-    winner -= t->tickets;
   }
 
-  // fallback
+  if (total_tickets == 0 || countt == 0) {
+    // fallback: 그냥 첫 번째 스레드 실행
+    return list_entry(list_pop_front(&ready_list), struct thread, elem);
+  }
+
+  // [3] Draw lottery among candidates
+  int winner = random_ulong() % total_tickets + 1;
+  for (int i = 0; i < countt; i++) {
+    if (winner <= tickets[i]) {
+      list_remove(&candidates[i]->elem);
+      return candidates[i];
+    }
+    winner -= tickets[i];
+  }
+
+  // fallback: 안전장치
   return list_entry(list_pop_front(&ready_list), struct thread, elem);
 }
-
-
 
 
 
@@ -766,5 +782,7 @@ int64_t get_next_tick_to_awake(void){ // 다음으로 깨어나야 할 tick 값�
 bool ticket_desc(const struct list_elem *a, const struct list_elem *b, void *aux UNUSED) {
   struct thread *ta = list_entry(a, struct thread, elem);
   struct thread *tb = list_entry(b, struct thread, elem);
+  if (ta->priority != tb->priority)
+    return ta->priority > tb->priority;
   return ta->tickets > tb->tickets;
 }

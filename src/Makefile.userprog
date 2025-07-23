@@ -1,9 +1,10 @@
 # -*- makefile -*-
 
+CPPFLAGS += -DFILESYS
 $(PROGS): CPPFLAGS += -I$(SRCDIR)/lib/user -I.
 
 # Linker flags.
-$(PROGS): LDFLAGS += -nostdlib -static -Wl,-T,$(LDSCRIPT)
+$(PROGS): LDFLAGS += -nostdlib -static -Wl,-T,$(LDSCRIPT) -Wl,--omagic
 $(PROGS): LDSCRIPT = $(SRCDIR)/lib/user/user.lds
 
 # Library code shared between kernel and user programs.

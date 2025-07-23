@@ -101,7 +101,10 @@ struct thread
     int perf_id;
 #ifdef USERPROG
     /* Owned by userprog/process.c. */
-    uint32_t *pagedir;                  /* Page directory. */
+    uint32_t *pagedir;   
+    int fd_idx; /*다음에 할당할 파일 디스크립터 번호*/ 
+    struct file *fd_table[128];   /* 유저 프로세스의 열린 파일 목록 */
+   /* Page directory. */
 #endif
 
     /* Owned by thread.c. */
@@ -154,11 +157,12 @@ int64_t get_next_tick_to_awake(void);
 enum scheduler_type {
   SCHED_ROUND_ROBIN, //0
   SCHED_LOTTERY//1
+  
 };
 void set_scheduler(enum scheduler_type type);
 extern enum scheduler_type current_scheduler; //현재 스케쥴링 방식
 struct thread *pick_lottery_thread(void);
-extern int count[3];
+//int count[3];->userprog에서 error
 
 
 #endif /* threads/thread.h */

@@ -65,10 +65,10 @@ static char **parse_options (char **argv);
 static void run_actions (char **argv);
 static void usage (void);
 
-#ifdef FILESYS
+ //#ifdef FILESYS
 static void locate_block_devices (void);
-static void locate_block_device (enum block_type, const char *name);
-#endif
+static void locate_block_device (enum block_type, const char *name); 
+ //#endif
 
 int main (void) NO_RETURN;
 
@@ -93,7 +93,7 @@ main (void)
 
   /* Initialize ourselves as a thread so we can use locks,
      then enable console locking. */
-  thread_init ();
+  thread_init (); //스레드 시스템 초기화
   console_init ();  
 
   /* Greet user. */

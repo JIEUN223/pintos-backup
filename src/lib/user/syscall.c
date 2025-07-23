@@ -1,5 +1,6 @@
 #include <syscall.h>
 #include "../syscall-nr.h"
+#include "filesys/file.h"  
 
 /* Invokes syscall NUMBER, passing no arguments, and returns the
    return value as an `int'. */
@@ -182,3 +183,14 @@ inumber (int fd)
 {
   return syscall1 (SYS_INUMBER, fd);
 }
+
+/* stub for tests/main.c */
+#include <stdint.h>
+
+int64_t
+timer_ticks (void) 
+{
+  /* 그냥 0 리턴해도 무방합니다. */
+  return 0;
+}
+

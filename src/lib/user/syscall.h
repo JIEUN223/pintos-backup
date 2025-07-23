@@ -4,6 +4,10 @@
 #include <stdbool.h>
 #include <debug.h>
 
+#ifdef USERPROG
+  struct file *fd_table[128];   /* 유저 프로세스의 열린 파일 목록 */
+#endif
+
 /* Process identifier. */
 typedef int pid_t;
 #define PID_ERROR ((pid_t) -1)
@@ -46,3 +50,4 @@ bool isdir (int fd);
 int inumber (int fd);
 
 #endif /* lib/user/syscall.h */
+
