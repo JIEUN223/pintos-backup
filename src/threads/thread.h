@@ -98,7 +98,7 @@ struct thread
     struct list_elem elem;             //elem은 thread가 ready_list나 blocked_list에 들어갔을 때, 그 리스트에서의 자기 위치(노드) 역할을 해주는 필드
 
     int tickets;   // 기본 값 1, 추후 값 바꾸는 것  가능
-
+    int perf_id;
 #ifdef USERPROG
     /* Owned by userprog/process.c. */
     uint32_t *pagedir;                  /* Page directory. */
@@ -157,7 +157,8 @@ enum scheduler_type {
 };
 void set_scheduler(enum scheduler_type type);
 extern enum scheduler_type current_scheduler; //현재 스케쥴링 방식
-
+struct thread *pick_lottery_thread(void);
+extern int count[3];
 
 
 #endif /* threads/thread.h */

@@ -77,7 +77,6 @@ static tid_t allocate_tid (void);
 
 /******고친 부분 */
 // thread.c 맨 위쪽에 추가 (next_thread_to_run보다 위!)
-static struct thread *pick_lottery_thread(void);
 struct thread *get_thread_by_tid(tid_t tid);
 static int next_thread_tickets = 1;
 //스케쥴링 방식 
@@ -87,6 +86,9 @@ void
 set_scheduler(enum scheduler_type type) {
   current_scheduler = type;
 }
+/* 티켓 수 내림차순 정렬용 비교 함수 */
+bool ticket_desc(const struct list_elem *a, const struct list_elem *b, void *aux UNUSED);
+
 
 
 
@@ -271,7 +273,7 @@ thread_unblock (struct thread *t)
 
   old_level = intr_disable ();
   ASSERT (t->status == THREAD_BLOCKED);
-  list_push_back (&ready_list, &t->elem);
+  list_insert_ordered(&ready_list, &t->elem, ticket_desc, NULL); // ← 여기!
   t->status = THREAD_READY;
   intr_set_level (old_level);
 }
@@ -342,7 +344,7 @@ thread_yield (void)
 
   old_level = intr_disable ();
   if (cur != idle_thread) 
-    list_push_back (&ready_list, &cur->elem);
+    list_insert_ordered(&ready_list, &cur->elem, ticket_desc, NULL);  // ← 여기!
   cur->status = THREAD_READY;
   schedule ();
   intr_set_level (old_level);
@@ -498,6 +500,7 @@ init_thread (struct thread *t, const char *name, int priority)
  //tick_to_awake값은 thread_sleep()에서 바뀜
   t->magic = THREAD_MAGIC;
   t->tickets = next_thread_tickets;
+  t->perf_id=0;
   list_push_back (&all_list, &t->allelem);
 
 }
@@ -528,36 +531,40 @@ next_thread_to_run(void) {
 
   if (current_scheduler == SCHED_ROUND_ROBIN)
     return list_entry(list_pop_front(&ready_list), struct thread, elem);
-  else if (current_scheduler == SCHED_LOTTERY)
-    return pick_lottery_thread();  // 추가함수->lottery 스케쥴링
+
+  else if (current_scheduler == SCHED_LOTTERY) {
+     struct thread *next = pick_lottery_thread();
+
+    // 스레드가 성능 측정 대상이면 count 증가
+      count[next->perf_id]++;
+
+    return next;
+  }
 }
 
-
-//로터리 스케쥴링 함수
-static struct thread *pick_lottery_thread(void) {
+struct thread *pick_lottery_thread(void) {
   if (list_empty(&ready_list))
     return idle_thread;
 
   int total_tickets = 0;
   struct list_elem *e;
 
-  // 1. 전체 티켓 수 계산
+  // 총 티켓 수 계산
   for (e = list_begin(&ready_list); e != list_end(&ready_list); e = list_next(e)) {
     struct thread *t = list_entry(e, struct thread, elem);
-    total_tickets += t->tickets;  // 기본 값은 1
+    total_tickets += t->tickets;
   }
 
   if (total_tickets == 0)
     return list_entry(list_pop_front(&ready_list), struct thread, elem);
 
-  // 2. 난수 추첨 (1~total_tickets)
   int winner = random_ulong() % total_tickets + 1;
 
-  // 3. 추첨된 티켓을 가진 thread 선택
+  // 내림차순이므로 앞에서부터 빠르게 당첨자 탐색
   for (e = list_begin(&ready_list); e != list_end(&ready_list); e = list_next(e)) {
     struct thread *t = list_entry(e, struct thread, elem);
     if (winner <= t->tickets) {
-      list_remove(e);  // ready_list에서 꼭 제거해야 함!
+      list_remove(&t->elem);
       return t;
     }
     winner -= t->tickets;
@@ -566,6 +573,10 @@ static struct thread *pick_lottery_thread(void) {
   // fallback
   return list_entry(list_pop_front(&ready_list), struct thread, elem);
 }
+
+
+
+
 
 //또 추가
 /* Find thread by tid from all_list. */
@@ -748,4 +759,12 @@ int64_t get_next_tick_to_awake(void){ // 다음으로 깨어나야 할 tick 값�
     next_tick_to_awake=INT64_MAX;
   }
   return next_tick_to_awake;
+}
+
+//lottery-desc-order추가 부분
+/* 티켓 수 내림차순 정렬용 비교 함수 */
+bool ticket_desc(const struct list_elem *a, const struct list_elem *b, void *aux UNUSED) {
+  struct thread *ta = list_entry(a, struct thread, elem);
+  struct thread *tb = list_entry(b, struct thread, elem);
+  return ta->tickets > tb->tickets;
 }
