@@ -261,6 +261,8 @@ parse_options (char **argv)
 #endif
       else if (!strcmp (name, "-rs"))
         random_init (atoi (value));
+      else if (!strcmp (name, "-rbt"))
+        ready_use_rbtree = true;
       else if (!strcmp (name, "-mlfqs"))
         thread_mlfqs = true;
 #ifdef USERPROG
@@ -299,6 +301,14 @@ run_task (char **argv)
   printf ("Execution of '%s' complete.\n", task);
 }
 
+static void
+run_kernel_test (char **argv)
+{
+  printf ("Executing '%s':\n", argv[1]);
+  run_test (argv[1]);
+  printf ("Execution of '%s' complete.\n", argv[1]);
+}
+
 /* Executes all of the actions specified in ARGV[]
    up to the null pointer sentinel. */
 static void
@@ -316,6 +326,7 @@ run_actions (char **argv)
   static const struct action actions[] = 
     {
       {"run", 2, run_task},
+      {"kernel-test", 2, run_kernel_test},
 #ifdef FILESYS
       {"ls", 1, fsutil_ls},
       {"cat", 2, fsutil_cat},

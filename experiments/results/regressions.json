@@ -1,0 +1,112 @@
+[
+  {
+    "queue": "list",
+    "test": "alarm-single",
+    "result": "PASS"
+  },
+  {
+    "queue": "list",
+    "test": "alarm-multiple",
+    "result": "PASS"
+  },
+  {
+    "queue": "list",
+    "test": "alarm-simultaneous",
+    "result": "PASS"
+  },
+  {
+    "queue": "list",
+    "test": "alarm-zero",
+    "result": "PASS"
+  },
+  {
+    "queue": "list",
+    "test": "alarm-negative",
+    "result": "PASS"
+  },
+  {
+    "queue": "list",
+    "test": "alarm-priority",
+    "result": "PASS"
+  },
+  {
+    "queue": "list",
+    "test": "priority-fifo",
+    "result": "FAIL"
+  },
+  {
+    "queue": "list",
+    "test": "priority-change",
+    "result": "FAIL"
+  },
+  {
+    "queue": "list",
+    "test": "priority-preempt",
+    "result": "FAIL"
+  },
+  {
+    "queue": "list",
+    "test": "priority-sema",
+    "result": "FAIL"
+  },
+  {
+    "queue": "list",
+    "test": "priority-condvar",
+    "result": "FAIL"
+  },
+  {
+    "queue": "rbt",
+    "test": "alarm-single",
+    "result": "PASS"
+  },
+  {
+    "queue": "rbt",
+    "test": "alarm-multiple",
+    "result": "PASS"
+  },
+  {
+    "queue": "rbt",
+    "test": "alarm-simultaneous",
+    "result": "PASS"
+  },
+  {
+    "queue": "rbt",
+    "test": "alarm-zero",
+    "result": "PASS"
+  },
+  {
+    "queue": "rbt",
+    "test": "alarm-negative",
+    "result": "PASS"
+  },
+  {
+    "queue": "rbt",
+    "test": "alarm-priority",
+    "result": "PASS"
+  },
+  {
+    "queue": "rbt",
+    "test": "priority-fifo",
+    "result": "FAIL"
+  },
+  {
+    "queue": "rbt",
+    "test": "priority-change",
+    "result": "FAIL"
+  },
+  {
+    "queue": "rbt",
+    "test": "priority-preempt",
+    "result": "FAIL"
+  },
+  {
+    "queue": "rbt",
+    "test": "priority-sema",
+    "result": "FAIL"
+  },
+  {
+    "queue": "rbt",
+    "test": "priority-condvar",
+    "result": "FAIL"
+  }
+]

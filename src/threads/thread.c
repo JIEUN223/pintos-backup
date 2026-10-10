@@ -24,6 +24,16 @@
 /* List of processes in THREAD_READY state, that is, processes
    that are ready to run but not actually running. */
 static struct list ready_list;
+static struct rb_tree ready_tree;
+static uint64_t ready_sequence;
+bool ready_use_rbtree;
+uint64_t ready_comparisons;
+uint64_t ready_insertions;
+static bool ready_list_less(const struct list_elem *, const struct list_elem *, void *);
+static bool ready_less(const struct rb_node *, const struct rb_node *, void *);
+static void ready_add(struct thread *);
+static struct thread *ready_pop(void);
+static bool ready_empty(void);
 
 /* List of all processes.  Processes are added to this list
    when they are first scheduled and removed when they exit. */
@@ -113,6 +123,7 @@ thread_init (void)
 
   lock_init (&tid_lock);
   list_init (&ready_list);
+  rb_init(&ready_tree, ready_less, NULL);
   list_init(&blocked_list);
   list_init (&all_list);
 
@@ -274,7 +285,7 @@ thread_unblock (struct thread *t)
 
   old_level = intr_disable ();
   ASSERT (t->status == THREAD_BLOCKED);
-  list_insert_ordered(&ready_list, &t->elem, ticket_desc, NULL); // ← 여기!
+  ready_add(t); // ← 여기!
   t->status = THREAD_READY;
   intr_set_level (old_level);
 }
@@ -345,7 +356,7 @@ thread_yield (void)
 
   old_level = intr_disable ();
   if (cur != idle_thread) 
-    list_insert_ordered(&ready_list, &cur->elem, ticket_desc, NULL);  // ← 여기!
+    ready_add(cur);  // ← 여기!
   cur->status = THREAD_READY;
   schedule ();
   intr_set_level (old_level);
@@ -527,11 +538,11 @@ alloc_frame (struct thread *t, size_t size)
 // threads/scheduler.c
 static struct thread *
 next_thread_to_run(void) {
-  if (list_empty(&ready_list))
+  if (ready_empty())
     return idle_thread;
 
   if (current_scheduler == SCHED_ROUND_ROBIN)
-    return list_entry(list_pop_front(&ready_list), struct thread, elem);
+    return ready_pop();
 
   else if (current_scheduler == SCHED_LOTTERY) {
      struct thread *next = pick_lottery_thread();
@@ -544,7 +555,27 @@ next_thread_to_run(void) {
 }
 
 struct thread *pick_lottery_thread(void) {
-  if (list_empty(&ready_list))
+  if (ready_use_rbtree) {
+    struct rb_node *node = rb_first(&ready_tree);
+    if (!node) return idle_thread;
+    struct thread *candidates[64];
+    int countt = 0, total = 0;
+    int priority = rb_entry(node, struct thread, ready_node)->priority;
+    while (node && countt < 64) {
+      struct thread *t = rb_entry(node, struct thread, ready_node);
+      if (t->priority != priority) break;
+      candidates[countt++] = t; total += t->tickets;
+      node = rb_next(&ready_tree, node);
+    }
+    if (total <= 0) return ready_pop();
+    int winner = random_ulong() % total + 1;
+    for (int i = 0; i < countt; i++) {
+      winner -= candidates[i]->tickets;
+      if (winner <= 0) { rb_remove(&ready_tree, &candidates[i]->ready_node); return candidates[i]; }
+    }
+    return ready_pop();
+  }
+  if (ready_empty())
     return idle_thread;
 
   struct list_elem *e;
@@ -575,7 +606,7 @@ struct thread *pick_lottery_thread(void) {
 
   if (total_tickets == 0 || countt == 0) {
     // fallback: 그냥 첫 번째 스레드 실행
-    return list_entry(list_pop_front(&ready_list), struct thread, elem);
+    return ready_pop();
   }
 
   // [3] Draw lottery among candidates
@@ -589,7 +620,7 @@ struct thread *pick_lottery_thread(void) {
   }
 
   // fallback: 안전장치
-  return list_entry(list_pop_front(&ready_list), struct thread, elem);
+  return ready_pop();
 }
 
 
@@ -739,7 +770,7 @@ void thread_awake(int64_t ticks) {
       old_level=intr_disable();
       
       ASSERT(t->status == THREAD_BLOCKED);
-      list_push_back(&ready_list, &t->elem);
+      ready_add(t);
       t->status = THREAD_READY;
       intr_set_level(old_level);
     }
@@ -785,4 +816,25 @@ bool ticket_desc(const struct list_elem *a, const struct list_elem *b, void *aux
   if (ta->priority != tb->priority)
     return ta->priority > tb->priority;
   return ta->tickets > tb->tickets;
+}
+/* Same priority/ticket ordering as ticket_desc; sequence preserves FIFO ties. */
+static bool ready_less(const struct rb_node *a, const struct rb_node *b, void *aux UNUSED) {
+ ready_comparisons++;
+ const struct thread *x=rb_entry(a,struct thread,ready_node), *y=rb_entry(b,struct thread,ready_node);
+ if(x->priority!=y->priority) return x->priority>y->priority;
+ if(x->tickets!=y->tickets) return x->tickets>y->tickets;
+ return x->ready_order<y->ready_order;
+}
+static bool ready_list_less(const struct list_elem *a, const struct list_elem *b, void *aux) {
+ ready_comparisons++; return ticket_desc(a,b,aux);
+}
+static void ready_add(struct thread *t) {
+ ready_insertions++;
+ if(ready_use_rbtree) { t->ready_order=ready_sequence++; rb_insert(&ready_tree,&t->ready_node); }
+ else list_insert_ordered(&ready_list,&t->elem,ready_list_less,NULL);
+}
+static bool ready_empty(void) { return ready_use_rbtree ? ready_tree.size==0 : list_empty(&ready_list); }
+static struct thread *ready_pop(void) {
+ if(ready_use_rbtree) { struct rb_node *n=rb_first(&ready_tree); ASSERT(n); rb_remove(&ready_tree,n); return rb_entry(n,struct thread,ready_node); }
+ return list_entry(list_pop_front(&ready_list),struct thread,elem);
 }

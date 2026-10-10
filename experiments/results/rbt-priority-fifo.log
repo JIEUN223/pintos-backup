@@ -1,0 +1,364 @@
+qemu-system-i386 -device isa-debug-exit -hda /tmp/d5zs79Wd0m.dsk -m 4 -net none -nographic -monitor null
+WARNING: Image format was not specified for '/tmp/d5zs79Wd0m.dsk' and probing guessed raw.
+         Automatically detecting the format is dangerous for raw images, write operations on block 0 will be restricted.
+         Specify the 'raw' format explicitly to remove the restrictions.
+Could not open option rom 'kvmvapic.bin': No such file or directory
+c[?7l[2J[0mSeaBIOS (version 1.16.3-debian-1.16.3-2)
+Booting from Hard Disk...
+PPiiLLoo  hhddaa1
+1
+LLooaaddiinngg...........................
+Kernel command line: -rbt -f -q kernel-test priority-fifo
+Pintos booting with 3,968 kB RAM...
+367 pages available in kernel pool.
+367 pages available in user pool.
+Calibrating timer...  469,401,600 loops/s.
+ide0: unexpected interrupt
+hda: 5,040 sectors (2 MB), model "QM00001", serial "QEMU HARDDISK"
+hda1: 228 sectors (114 kB), Pintos OS kernel (20)
+hda2: 4,096 sectors (2 MB), Pintos file system (21)
+ide1: unexpected interrupt
+filesys: using hda2
+Formatting file system...done.
+Boot complete.
+jhtest result = 1550
+Executing 'priority-fifo':
+(priority-fifo) begin
+(priority-fifo) 16 threads will iterate 16 times in the same order each time.
+(priority-fifo) If the order varies then there is a bug.
+(priority-fifo) end
+Execution of 'priority-fifo' complete.
+Timer: 61 ticks
+Thread: 30 idle ticks, 32 kernel ticks, 0 user ticks
+Page fault at 0xc00231fc: rights violation error writing page in kernel context.
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc002ff51
+ cr2=c00231fc error=00000003
+ eax=5c8b0389 ebx=c000ee80 ecx=5c8b038d edx=c00231fc
+ esi=00000010 edi=00000000 esp=c003e178 ebp=00000000
+ cs=0008 ds=0010 es=0010 ss=0000
+Kernel PANIC at ../../userprog/exception.c:100 in kill(): Kernel bug - unexpected interrupt in kernel
+Call stack: 0xc0028f8b.
+The `backtrace' program can make call stacks useful.
+Read "Backtraces" in the "Debugging Tools" chapter
+of the Pintos documentation for more information.
+Kernel PANIC recursion at ../../filesys/inode.c:336 in inode_allow_write().
+Page fault at 0xcccccce0: not present error reading page in kernel context.
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc002c8e6
+ cr2=cccccce0 error=00000000
+ eax=cccccccc ebx=c010703c ecx=00000000 edx=cccccccc
+ esi=c003c5fc edi=00000001 esp=00000000 ebp=00000000
+ cs=0008 ds=0010 es=0010 ss=0000
+Page fault at 0xccccccd8: not present error reading page in kernel context.
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc002c3b1
+ cr2=ccccccd8 error=00000000
+ eax=cccccccc ebx=cccccccc ecx=00000780 edx=000003d4
+ esi=00000008 edi=c0034ad9 esp=00000000 ebp=c0110dd8
+ cs=0008 ds=0010 es=0010 ss=0000
+Page fault at 0xccccccd8: not present error reading page in kernel context.
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc002c3b1
+Page fault at 0xc0029b50: rights violation error writing page in kernel context.
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc002ff51
+ cr2=c0029b50 error=00000003
+ eax=c31cc483 ebx=c000eea0 ecx=c31cc487 edx=c0029b50
+ esi=00000010 edi=00000000 esp=c0108000 ebp=00000000
+ cs=0008 ds=0010 es=0010 ss=0000
+Page fault at 0xccccccd8: not present error reading page in kernel context.
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc002c3b1
+ cr2=ccccccd8 error=00000000
+ eax=cccccccc ebx=cccccccc ecx=00000780 edx=000003d4
+ esi=00000008 edi=c0034ad9 esp=00000000 ebp=c0111f98
+ cs=0008 ds=0010 es=0010 ss=0000
+Page fault at 0xccccccd8: not present error reading page in kernel context.
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc002c3b1
+ cr2=ccccccd8 ePage fault at 0xffffffff: not present error reading page in kernel context.
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc0023188
+ cr2=ffffffff error=00000000
+ eax=ffffffff ebx=ffffffff ecx=c0112000 edx=c0103000
+ esi=00000010 edi=00000000 esp=c0112f7c ebp=00000000
+ cs=0008 ds=0010 es=0010 ss=0000
+Page fault at 0xccccccd8: not present error reading page in kernel context.
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc002c3b1
+ cr2=ccccccd8 error=00000000
+ eax=cccccccc ebx=cccccccc ecx=00000780 edx=000003d4
+ esi=00000008 edi=c0034ad9 esp=00000000 ebp=c0112f38
+ cs=0008 ds=0010 es=0010 ss=0000
+Page fault at 0xccccccd8: not present error reading page in kernel context.
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc002c3b1
+ cr2=cccPage fault at 0xc0031c70: rights violation error writing page in kernel context.
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc0022f13
+ cr2=c0031c70 error=00000003
+ eax=00000001 ebx=c0031c70 ecx=c0113000 edx=c0103000
+ esi=00000010 edi=00000001 esp=00000000 ebp=00000000
+ cs=0008 ds=0010 es=0010 ss=0000
+Page fault at 0xccccccd8: not present error reading page in kernel context.
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc002c3b1
+ cr2=ccccccd8 error=00000000
+ eax=cccccccc ebx=cccccccc ecx=00000780 edx=000003d4
+ esi=00000008 edi=c0034ad9 esp=00000000 ebp=c0113f38
+ cs=0008 ds=0010 es=0010 ss=0000
+Page fault at 0xc002b398: rights violation error writing page in kernel context.
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc002ff51
+ cr2=c002b398 error=00000003
+ eax=ffff49e8 ebx=c000eed0 ecx=ffff49ec edx=c002b398
+ esi=00000010 edi=00000000 esp=c000eff8 ebp=00000000
+ cs=0008 ds=0010 es=0010 ss=0000
+Page fault at 0xccccccd8: not present error reading page in kernel context.
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc002c3b1
+ cr2=ccccccd8 error=00000000
+ eax=cccccccc ebx=cccccccc ecx=00000780 edx=000003d4
+ esi=00000008 edi=c0034ad9 esp=00000000 ebp=c0114f98
+ cs=0008 ds=0010 es=0010 ss=0000
+Page fault at 0xccccccd8: not present error reading page in kernel context.
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc002c3b1
+Page fault at 0xc002b294: rights violation error writing page in kernel context.
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc0022f13
+ cr2=c002b294 error=00000003
+ eax=ff142443 ebx=c002b294 ecx=c0115000 edx=c0103000
+ esi=00000010 edi=00000001 esp=00000000 ebp=00000000
+ cs=0008 ds=0010 es=0010 ss=0000
+Page fault at 0xccccccd8: not present error reading page in kernel context.
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc002c3b1
+ cr2=ccccccd8 error=00000000
+ eax=cccccccc ebx=cccccccc ecx=00000780 edx=000003d4
+ esi=00000008 edi=c0034ad9 esp=00000000 ebp=c0115f38
+ cs=0008 ds=0010 es=0010 ss=0000
+Page fault at 0xccccccd8: not present error reading page in kernel context.
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc002c3b1
+Page fault at 0xc002b294: rights violation error writing page in kernel context.
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc0022f13
+ cr2=c002b294 error=00000003
+ eax=ff142443 ebx=c002b294 ecx=c0116000 edx=c0103000
+ esi=00000010 edi=00000001 esp=00000000 ebp=00000000
+ cs=0008 ds=0010 es=0010 ss=0000
+Page fault at 0xccccccd8: not present error reading page in kernel context.
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc002c3b1
+ cr2=ccccccd8 error=00000000
+ eax=cccccccc ebx=cccccccc ecx=00000780 edx=000003d4
+ esi=00000008 edi=c0034ad9 esp=00000000 ebp=c0116f38
+ cs=0008 ds=0010 es=0010 ss=0000
+Page fault at 0xccccccd8: not present Page fault at 0xc002712a: rights violation error writing page in kernel context.
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc002ff51
+ cr2=c002712a error=00000003
+ eax=c31cc483 ebx=c000ef00 ecx=c31cc487 edx=c002712a
+ esi=00000010 edi=00000000 esp=c000eff8 ebp=00000000
+ cs=0008 ds=0010 es=0010 ss=0024
+Page fault at 0xccccccd8: not present error reading page in kernel context.
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc002c3b1
+ cr2=ccccccd8 error=00000000
+ eax=cccccccc ebx=cccccccc ecx=00000780 edx=000003d4
+ esi=00000008 edi=c0034ad9 esp=00000000 ebp=c0117f98
+ cs=0008 ds=0010 es=0010 ss=0000
+Page fault at 0xccccccd8: not present error reading page in kernel contextPage fault at 0xc0021d51: rights violation error writing page in kernel context.
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc0022f13
+ cr2=c0021d51 error=00000003
+ eax=247c830b ebx=c0021d51 ecx=c0118000 edx=c0103000
+ esi=00000010 edi=00000001 esp=00000000 ebp=00000000
+ cs=0008 ds=0010 es=0010 ss=0000
+Page fault at 0xccccccd8: not present error reading page in kernel context.
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc002c3b1
+ cr2=ccccccd8 error=00000000
+ eax=cccccccc ebx=cccccccc ecx=00000780 edx=000003d4
+ esi=00000008 edi=c0034ad9 esp=00000000 ebp=c0118f38
+Page fault at 0xc0031c70: rights violation error writing page in kernel context.
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc0022f13
+ cr2=c0031c70 error=00000003
+ eax=00000001 ebx=c0031c70 ecx=c0119000 edx=c0103000
+ esi=00000010 edi=00000001 esp=00000000 ebp=00000000
+ cs=0008 ds=0010 es=0010 ss=0000
+Page fault at 0xccccccd0: not present error writing page in kernel context.
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc00299bb
+ cr2=c0031c70 error=00000002
+ eax=c010703c ebx=c0107000 ecx=cccccccc edx=c010703c
+ esi=c003dc40 edi=c003dc58 esp=00000000 ebp=c010703c
+ cs=0008 ds=0010 es=0010 ss=000a
+Page fault at 0xccccccd8: not present error reading page in kernel context.
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc002c3b1
+ cr2=ccccccd8 error=00000000
+ cr2=ccccccd8 error=00000000
+ eax=cccccccc ebx=cccccccc ecx=00000780 edx=000003d4
+ esi=00000008 edi=c0034ad9 esp=00000030 ebp=c0110c3c
+ cs=0008 ds=0010 es=0010 ss=0092
+Page fault at 0xccccccd8: not present error reading page in kernel context.
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc002c3b1
+ cr2=ccccccd8 error=00000000
+ eax=cccccccc ebx=cccccccc ecx=00000780 edx=000003d4
+ esi=00000008 edi=c0034ad9 esp=00000030 ebp=c0110aa0
+ cs=0008 ds=0010 es=0010 ss=0082
+rror=00000000
+ eax=cccccccc ebx=cccccccc ecx=00000780 edx=000003d4
+ esi=00000008 edi=c0034ad9 esp=00000030 ebp=c0111dfc
+ cs=0008 ds=0010 es=0010 ss=0092
+Page fault at 0xccccccd8: not present error reading page in kernel context.
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc002c3b1
+ cr2=ccccccd8 error=00000000
+ eax=cccccccc ebx=cccccccc ecx=00000780 edx=000003d4
+ esi=00000008 edi=c0034ad9 esp=00000030 ebp=c0111c60
+ cs=0008 ds=0010 es=0010 ss=0082
+Page fault at 0xccccccd8: not present error reading page in kernel context.
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc002c3b1
+ cr2=ccccccd8 error=00000000
+cccd8 error=00000000
+ eax=cccccccc ebx=cccccccc ecx=00000780 edx=000003d4
+ esi=00000008 edi=c0034ad9 esp=00000030 ebp=c0112d9c
+ cs=0008 ds=0010 es=0010 ss=0092
+Page fault at 0xccccccd8: not present error reading page in kernel context.
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc002c3b1
+ cr2=ccccccd8 error=00000000
+ eax=cccccccc ebx=cccccccc ecx=00000780 edx=000003d4
+ esi=00000008 edi=c0034ad9 esp=00000030 ebp=c0112c00
+ cs=0008 ds=0010 es=0010 ss=0082
+Page fault at 0xccccccd8: not present error reading page in kernel context.
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc002c3b1
+ cr2=ccccccd8 error=00000000
+Page fault at 0xccccccd8: not present error reading page in kernel context.
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc002c3b1
+ cr2=ccccccd8 error=00000000
+ eax=cccccccc ebx=cccccccc ecx=00000780 edx=000003d4
+ esi=00000008 edi=c0034ad9 esp=00000030 ebp=c0113d9c
+ cs=0008 ds=0010 es=0010 ss=0092
+Page fault at 0xccccccd8: not present error reading page in kernel context.
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc002c3b1
+ cr2=ccccccd8 error=00000000
+ eax=cccccccc ebx=cccccccc ecx=00000780 edx=000003d4
+ esi=00000008 edi=c0034ad9 esp=c000e040 ebp=c0113c00
+ cs=0008 ds=0010 es=0010 ss=0000
+Page fault at 0xccccccd8: not present error reading page in kernel context.
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc002c3b1
+ cr2=ccccccd8 error=00000000
+ eax=cccccccc ebx=cccccccc ecx=00000780 edx=000003d4
+ esi=00000008 edi=c0034ad9 esp=00000030 ebp=c0114dfc
+ cs=0008 ds=0010 es=0010 ss=0092
+Page fault at 0xccccccd8: not present error reading page in kernel context.
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc002c3b1
+ cr2=ccccccd8 error=00000000
+ eax=cccccccc ebx=cccccccc ecx=00000780 edx=000003d4
+ esi=00000008 edi=c0034ad9 esp=00000030 ebp=c0114c60
+ cs=0008 ds=0010 es=0010 ss=0082
+Page fault at 0xccccccd8: not present error reading page in kernel context.
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc002c3b1
+ cr2=ccccccd8 error=00000000
+ eax=cccccccc ebx=cccccccc ecx=00000780 edx=000003d4
+ cr2=ccccccd8 error=00000000
+ eax=cccccccc ebx=cccccccc ecx=00000780 edx=000003d4
+ esi=00000008 edi=c0034ad9 esp=00000030 ebp=c0115d9c
+ cs=0008 ds=0010 es=0010 ss=0092
+Page fault at 0xccccccd8: not present error reading page in kernel context.
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc002c3b1
+ cr2=ccccccd8 error=00000000
+ eax=cccccccc ebx=cccccccc ecx=00000780 edx=000003d4
+ esi=00000008 edi=c0034ad9 esp=00000030 ebp=c0115c00
+ cs=0008 ds=0010 es=0010 ss=0082
+Page fault at 0xccccccd8: not present error reading page in kernel context.
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc002c3b1
+ cr2=ccccccd8 error=00000000
+ eax=cccccccc ebx=cccccccc ecx=00000780 edx=000003d4
+ esi=00000008 edi=c0034ad9 esp=00000030 ebp=c0115a64
+ cs=0008 ds=0010 es=0010 ss=0096
+Page fault at 0xccccccd8:error reading page in kernel context.
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc002c3b1
+ cr2=ccccccd8 error=00000000
+ eax=cccccccc ebx=cccccccc ecx=00000780 edx=000003d4
+ esi=00000008 edi=c0034ad9 esp=00000030 ebp=c0116d9c
+ cs=0008 ds=0010 es=0010 ss=0092
+Page fault at 0xccccccd8: not present error reading page in kernel context.
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc002c3b1
+ cr2=ccccccd8 error=00000000
+ eax=cccccccc ebx=cccccccc ecx=00000780 edx=000003d4
+ esi=00000008 edi=c0034ad9 esp=00000030 ebp=c0116c00
+ cs=0008 ds=0010 es=0010 ss=0082
+Page fault at 0xccccccd8: not present error reading pa.
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc002c3b1
+ cr2=ccccccd8 error=00000000
+ eax=cccccccc ebx=cccccccc ecx=00000780 edx=000003d4
+ esi=00000008 edi=c0034ad9 esp=00000030 ebp=c0117dfc
+ cs=0008 ds=0010 es=0010 ss=0092
+Page fault at 0xccccccd8: not present error reading page in kernel context.
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc002c3b1
+ cr2=ccccccd8 error=00000000
+ eax=cccccccc ebx=cccccccc ecx=00000780 edx=000003d4
+ esi=00000008 edi=c0034ad9 esp=00000030 ebp=c0117c60
+ cs=0008 ds=0010 es=0010 ss=0082
+Page fault at 0xccccccd8: not present error reading page in kernel context.
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc002c3b1
+ cr2=ccccccd8 error cs=0008 ds=0010 es=0010 ss=0000
+Page fault at 0xccccccd8: not present error reading page in kernel context.
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc002c3b1
+ cr2=ccccccd8 error=00000000
+ eax=cccccccc ebx=cccccccc ecx=00000780 edx=000003d4
+ esi=00000008 edi=c0034ad9 esp=00000030 ebp=c0118d9c
+ cs=0008 ds=0010 es=0010 ss=0092
+Page fault at 0xccccccd8: not present error reading page in kernel context.
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc002c3b1
+ cr2=ccccccd8 error=00000000
+ eax=cccccccc ebx=cccccccc ecx=00000780 edx=000003d4
+ esi=00000008 edi=c0034ad9 esp=00000030 ebp=c0118c00
+ cs=0008 ds=0010 es=0010 ss=0082
+Page fault at 0xccccccd8: not present error reading page in kernel context.
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc002c3b1
+ cr2=ccccccd8 error=00000000
+Page fault at 0xccccccd8: not present error reading page in kernel context.
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc002c3b1
+ cr2=ccccccd8 error=00000000
+ eax=cccccccc ebx=cccccccc ecx=00000780 edx=000003d4
+ esi=00000008 edi=c0034ad9 esp=00000000 ebp=c0119f38
+ cs=0008 ds=0010 es=0010 ss=0000
+Page fault at 0xccccccd8: not present error reading page in kernel context.
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc002c3b1
+ cr2=ccccccd8 error=00000000
+ eax=cccccccc ebx=cccccccc ecx=00000780 edx=000003d4
+ esi=00000008 edi=c0034ad9 esp=c000e040 ebp=c0119d9c
+ cs=0008 ds=0010 es=0010 ss=0000
+Page fault at 0xccccccd8: not present error reading page in kernel context.
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc002c3b1
+ eax=cccccccc ebx=cccccccc ecx=00000780 edx=000003d4
+ esi=00000008 edi=c0034ad9 esp=c0110000 ebp=c010fc7c
+ cs=0008 ds=0010 es=0010 ss=f000
+Page fault at 0xccccccd8: not present error reading page in kernel context.
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc002c3b1
+ cr2=ccccccd8 error=00000000
+ eax=cccccccc ebx=cccccccc ecx=00000780 edx=000003d4
+ esi=00000008 edi=c0034ad9 esp=00000030 ebp=c010fae0
+ cs=0008 ds=0010 es=0010 ss=0086
+Page fault at 0xccccccd8: not present error reading page in kernel context.
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc002c3b1
+ cr2=ccccccd8 error=00000000
+ eax=cccccccc ebx=cccccccc ecx=00000780 edx=000003d4
+ esi=00000008 edi=c0034ad9 esp=00000030 ebp=c0110904
+ cs=0008 ds=0010 es=0010 ss=0096
+Page fault at 0xccccccd8: not present error reading page in kernel context.
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0xc002c3b1
+ cr2=ccccccd8 error=00000000
+ eax=cccccccc ebx=cccccccc ecx=00000780 edx=000003d4
+c[?7l[2J[0mSeaBIOS (version 1.16.3-debian-1.16.3-2)
+Booting from Hard Disk...
+PPiiLLoo  hhddaa1
+1
+LLooaaddiinngg...........................
+.
+Kernel command line: -rbt -f -q kernel-test priority-fifo
+Pintos booting with 3,968 kB RAM...
+367 pages available in kernel pool.
+367 pages available in user pool.
+Calibrating timer...  533,299,200 loops/s.
+ide0: unexpected interrupt
+hda: 5,040 sectors (2 MB), model "QM00001", serial "QEMU HARDDISK"
+hda1: 228 sectors (114 kB), Pintos OS kernel (20)
+hda2: 4,096 sectors (2 MB), Pintos file system (21)
+ide1: unexpected interrupt
+filesys: using hda2
+Formatting file system...done.
+Boot complete.
+jhtest result = 1550
+Executing 'priority-fifo':
+(priority-fifo) begin
+(priority-fifo) 16 threads will iterate 16 times in the same order each time.
+(priority-fifo) If the order varies then there is a bug.
+(priority-fifo) end
+Execution of 'priority-fifo' complete.
+Timer: 59 ticks
+Thread: 30 idle ticks, 30 kernel ticks, 0 user ticks
+hda2 (filesys): 3 reads, 6 writes
+Console: 863 characters output
+Keyboard: 0 keys pressed
+Exception: 0 page faults
+Powering off...

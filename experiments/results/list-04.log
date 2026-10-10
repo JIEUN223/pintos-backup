@@ -1,0 +1,38 @@
+qemu-system-i386 -device isa-debug-exit -hda /tmp/JUmyPgUKdk.dsk -m 4 -net none -nographic -monitor null
+WARNING: Image format was not specified for '/tmp/JUmyPgUKdk.dsk' and probing guessed raw.
+         Automatically detecting the format is dangerous for raw images, write operations on block 0 will be restricted.
+         Specify the 'raw' format explicitly to remove the restrictions.
+Could not open option rom 'kvmvapic.bin': No such file or directory
+c[?7l[2J[0mSeaBIOS (version 1.16.3-debian-1.16.3-2)
+Booting from Hard Disk...
+PPiiLLoo  hhddaa1
+1
+LLooaaddiinngg...........................
+Kernel command line: -f -q kernel-test ready-benchmark
+Pintos booting with 3,968 kB RAM...
+367 pages available in kernel pool.
+367 pages available in user pool.
+Calibrating timer...  412,467,200 loops/s.
+ide0: unexpected interrupt
+hda: 5,040 sectors (2 MB), model "QM00001", serial "QEMU HARDDISK"
+hda1: 228 sectors (114 kB), Pintos OS kernel (20)
+hda2: 4,096 sectors (2 MB), Pintos file system (21)
+ide1: unexpected interrupt
+filesys: using hda2
+Formatting file system...done.
+Boot complete.
+jhtest result = 1550
+(ready-benchmark) begin
+BENCH queue=list threads=10 yields=200 inserts=2011 comparisons=18054 events=2000 ticks=2
+BENCH queue=list threads=50 yields=200 inserts=10051 comparisons=491274 events=10000 ticks=21
+BENCH queue=list threads=100 yields=200 inserts=20101 comparisons=1985049 events=20000 ticks=78
+BENCH queue=list threads=200 yields=200 inserts=40201 comparisons=7980099 events=40000 ticks=313
+BENCH correctness=PASS
+(ready-benchmark) end
+Timer: 473 ticks
+Thread: 30 idle ticks, 444 kernel ticks, 0 user ticks
+hda2 (filesys): 3 reads, 6 writes
+Console: 1065 characters output
+Keyboard: 0 keys pressed
+Exception: 0 page faults
+Powering off...

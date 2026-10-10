@@ -47,7 +47,7 @@ sub set_part {
     my ($role, $source) = $opt =~ /^([a-z]+)(?:-([a-z]+))?/ or die;
 
     $role = uc $role;
-    $source = 'FILE' if $source eq '';
+    $source = 'file' if !defined ($source) || $source eq '';
 
     die "can't have two sources for \L$role\E partition"
       if exists $parts{$role};
@@ -359,7 +359,7 @@ sub cyl_sectors {
 # Makes sure that the loader is a reasonable size.
 sub read_loader {
     my ($name) = @_;
-    $name = find_file ("/home/ubuntu/pintos-anon/src/userprog/build/loader.bin") if !defined $name;
+    $name = find_file ("loader.bin") if !defined $name;
     die "Cannot find loader\n" if !defined $name;
 
     my ($handle);

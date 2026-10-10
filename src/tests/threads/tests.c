@@ -4,6 +4,7 @@
 #include <stdio.h>
 
 void test_lottery_performance(void);
+void test_ready_benchmark(void);
 
 struct test 
   {
@@ -41,6 +42,7 @@ static const struct test tests[] =
     {"mlfqs-nice-10", test_mlfqs_nice_10},
     {"mlfqs-block", test_mlfqs_block},
     { "lottery-performance", test_lottery_performance },
+    { "ready-benchmark", test_ready_benchmark },
     
 
   };

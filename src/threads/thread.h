@@ -4,6 +4,7 @@
 
 #include <debug.h>
 #include <list.h>
+#include "lib/kernel/rbtree.h"
 #include <stdint.h>
 
 /* States in a thread's life cycle. */
@@ -99,6 +100,8 @@ struct thread
 
     int tickets;   // 기본 값 1, 추후 값 바꾸는 것  가능
     int perf_id;
+    struct rb_node ready_node;
+    uint64_t ready_order;
 #ifdef USERPROG
     /* Owned by userprog/process.c. */
     uint32_t *pagedir;   
@@ -115,6 +118,9 @@ struct thread
    If true, use multi-level feedback queue scheduler.
    Controlled by kernel command-line option "-o mlfqs". */
 extern bool thread_mlfqs;
+extern bool ready_use_rbtree;
+extern uint64_t ready_comparisons;
+extern uint64_t ready_insertions;
 
 void thread_init (void);
 void thread_start (void);

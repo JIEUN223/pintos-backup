@@ -1,0 +1,37 @@
+qemu-system-i386 -device isa-debug-exit -hda /tmp/Zwn28jOH4F.dsk -m 4 -net none -nographic -monitor null
+WARNING: Image format was not specified for '/tmp/Zwn28jOH4F.dsk' and probing guessed raw.
+         Automatically detecting the format is dangerous for raw images, write operations on block 0 will be restricted.
+         Specify the 'raw' format explicitly to remove the restrictions.
+Could not open option rom 'kvmvapic.bin': No such file or directory
+c[?7l[2J[0mSeaBIOS (version 1.16.3-debian-1.16.3-2)
+Booting from Hard Disk...
+PPiiLLoo  hhddaa1
+1
+LLooaaddiinngg.........................
+Kernel command line: -f -q kernel-test priority-fifo
+Pintos booting with 3,968 kB RAM...
+367 pages available in kernel pool.
+367 pages available in user pool.
+Calibrating timer...  418,611,200 loops/s.
+ide0: unexpected interrupt
+hda: 5,040 sectors (2 MB), model "QM00001", serial "QEMU HARDDISK"
+hda1: 219 sectors (109 kB), Pintos OS kernel (20)
+hda2: 4,096 sectors (2 MB), Pintos file system (21)
+ide1: unexpected interrupt
+filesys: using hda2
+Formatting file system...done.
+Boot complete.
+jhtest result = 1550
+Executing 'priority-fifo':
+(priority-fifo) begin
+(priority-fifo) 16 threads will iterate 16 times in the same order each time.
+(priority-fifo) If the order varies then there is a bug.
+(priority-fifo) end
+Execution of 'priority-fifo' complete.
+Timer: 55 ticks
+Thread: 29 idle ticks, 26 kernel ticks, 0 user ticks
+hda2 (filesys): 3 reads, 6 writes
+Console: 858 characters output
+Keyboard: 0 keys pressed
+Exception: 0 page faults
+Powering off...
